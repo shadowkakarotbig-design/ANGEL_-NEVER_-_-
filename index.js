@@ -1,1 +1,0 @@
-console.log("ANGEL NEVER CRY démarre...");
