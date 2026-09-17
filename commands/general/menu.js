@@ -1,64 +1,54 @@
-🕊️━module.exports = {
+module.exports = {
+
   async execute(args, { sock, remoteJid }) {
 
-    const menu = `
-╔════════════════════════════╗
-        🕊️ ANGEL NEVER CRY
-╚════════════════════════════╝
-
-          🪽 MENU PRINCIPAL 🪽
-
-╭──────〔 🕊️ INFO 〕──────╮
-│ • 🕊menu                │
-╰─────────────────────────╯
-
-╭─────〔 🎵 MUSIQUE 〕─────╮
-│ • 🕊play                │
-│ • 🕊stop                │
-│ • 🕊skip                │
-╰─────────────────────────╯
-
-╭──────〔 🎌 ANIME 〕──────╮
-│ • 🕊protagoniste        │
-│ • 🕊antagoniste         │
-│ • 🕊secondary           │
-╰─────────────────────────╯
-
-╭───────〔 ❤️ FUN 〕───────╮
-│ • 🕊ship                │
-│ • 🕊couple              │
-│ • 🕊aura                │
-│ • 🕊dad                 │
-│ • 🕊mom                 │
-╰─────────────────────────╯
-
-╭──────〔 🖼️ MEDIA 〕──────╮
-│ • 🕊img                 │
-│ • 🕊video               │
-╰─────────────────────────╯
-
-╭───〔 🛡️ MODÉRATION 〕───╮
-│ • 🕊mute                │
-│ • 🕊unmute              │
-│ • 🕊antilink            │
-│ • 🕊antibot             │
-│ • 🕊autoreact           │
-╰─────────────────────────╯
-
-╭──────〔 👑 GROUPE 〕─────╮
-│ • 🕊tagadmin            │
-│ • 🕊tagall              │
-╰─────────────────────────╯
-
-╔════════════════════════════╗
-       🕊️ THAT'S LA PEACE
-╚════════════════════════════╝
-`;
-
     await sock.sendMessage(remoteJid, {
-      text: menu
+      image: { url: "./media/menu.jpg" },
+      caption: `🕊️━━━━━━━━━━━━━━━━━━🕊️
+        ANGEL NEVER CRY
+🕊️━━━━━━━━━━━━━━━━━━🕊️
+
+👑 MENU PRINCIPAL
+
+🕊️ 🕊️ 🕊️
+
+📌 COMMANDES GÉNÉRALES
+🕊️menu
+🕊️play
+🕊️stop
+🕊️skip
+
+🎭 ANIME
+🕊️protagoniste
+🕊️antagoniste
+🕊️secondary
+
+❤️ FUN
+🕊️ship
+🕊️couple
+🕊️aura
+🕊️dad
+🕊️mom
+
+🖼️ MÉDIA
+🕊️img
+🕊️video
+
+🛡️ MODÉRATION
+🕊️mute
+🕊️unmute
+🕊️antilink
+🕊️antibot
+🕊️autoreact
+🕊️tagadmin
+🕊️tagall
+
+🕊️━━━━━━━━━━━━━━━━━━🕊️
+       ANGEL NEVER CRY
+🕊️━━━━━━━━━━━━━━━━━━🕊️`
     });
 
     return null;
   }
+
 };
