@@ -4,7 +4,8 @@ const pino = require("pino");
 const {
   default: makeWASocket,
   useMultiFileAuthState,
-  DisconnectReason
+  DisconnectReason,
+  Browsers
 } = require("@whiskeysockets/baileys");
 
 // =====================================================
@@ -42,7 +43,7 @@ commands.set("tagadmin", require("./commands/moderation/tagadmin"));
 commands.set("tagall", require("./commands/moderation/tagall"));
 
 // =====================================================
-// ⚙️ EXÉCUTER UNE COMMANDE
+// ⚙️ EXECUTER UNE COMMANDE
 // =====================================================
 
 async function handleCommand(command, args, context) {
@@ -86,8 +87,10 @@ http.createServer((req, res) => {
 
 async function connectToWhatsApp() {
 
-  const { state, saveCreds } =
-    await useMultiFileAuthState("./auth_session");
+  const {
+    state,
+    saveCreds
+  } = await useMultiFileAuthState("./auth_session");
 
   const sock = makeWASocket({
 
@@ -97,7 +100,12 @@ async function connectToWhatsApp() {
       level: "silent"
     }),
 
-    printQRInTerminal: false
+    printQRInTerminal: false,
+
+    // Identité canonique pour le pairing
+    browser: Browsers.ubuntu("Chrome"),
+
+    connectTimeoutMs: 60000
 
   });
 
@@ -160,28 +168,37 @@ async function connectToWhatsApp() {
         const statusCode =
           lastDisconnect?.error?.output?.statusCode;
 
+        console.log("");
+        console.log(
+          "⚠️ Connexion WhatsApp fermée."
+        );
+
+        console.log(
+          "📌 Code :", statusCode || "inconnu"
+        );
+
         if (
           statusCode !== DisconnectReason.loggedOut
         ) {
 
           console.log(
-            "⚠️ Connexion WhatsApp perdue."
-          );
-
-          console.log(
-            "🔄 Reconnexion dans 3 secondes..."
+            "🔄 Reconnexion dans 5 secondes..."
           );
 
           setTimeout(() => {
 
             connectToWhatsApp();
 
-          }, 3000);
+          }, 5000);
 
         } else {
 
           console.log(
             "❌ Session WhatsApp déconnectée."
+          );
+
+          console.log(
+            "⚠️ Une nouvelle association sera nécessaire."
           );
 
         }
@@ -192,7 +209,7 @@ async function connectToWhatsApp() {
   );
 
   // ===================================================
-  // 🔑 CODE DE CONNEXION PAR NUMÉRO
+  // 🔑 ASSOCIATION PAR CODE
   // ===================================================
 
   if (!state.creds.registered) {
@@ -203,25 +220,46 @@ async function connectToWhatsApp() {
     if (!phoneNumber) {
 
       console.log(
-        "⚠️ PHONE_NUMBER n'est pas configuré dans Render."
+        "❌ PHONE_NUMBER n'est pas configuré dans Render."
       );
 
       return;
-
     }
 
+    // Garder uniquement les chiffres
     const cleanNumber =
       phoneNumber.replace(/\D/g, "");
+
+    if (!cleanNumber) {
+
+      console.log(
+        "❌ PHONE_NUMBER est invalide."
+      );
+
+      return;
+    }
 
     try {
 
       console.log("");
       console.log(
-        "🔄 Préparation du code WhatsApp..."
+        "======================================"
+      );
+      console.log(
+        "🔑 PRÉPARATION DE L'ASSOCIATION"
+      );
+      console.log(
+        "======================================"
       );
 
+      console.log(
+        "📱 Numéro utilisé :",
+        cleanNumber
+      );
+
+      // Laisser la connexion WebSocket s'établir
       await new Promise(
-        resolve => setTimeout(resolve, 5000)
+        resolve => setTimeout(resolve, 3000)
       );
 
       const code =
@@ -234,7 +272,7 @@ async function connectToWhatsApp() {
         "======================================"
       );
       console.log(
-        "🔑 CODE DE CONNEXION WHATSAPP"
+        "🔑 CODE D'ASSOCIATION WHATSAPP"
       );
       console.log(
         "👉 " + code
@@ -244,14 +282,41 @@ async function connectToWhatsApp() {
       );
       console.log("");
 
+      console.log(
+        "📱 WhatsApp → Paramètres → Appareils connectés"
+      );
+
+      console.log(
+        "📱 Puis → Connecter un appareil → avec un numéro de téléphone"
+      );
+
+      console.log(
+        "⏳ Entre le code affiché ci-dessus."
+      );
+
     } catch (error) {
 
+      console.error("");
       console.error(
-        "❌ Impossible de générer le code WhatsApp :",
+        "❌ ERREUR D'ASSOCIATION WHATSAPP"
+      );
+
+      console.error(
+        error
+      );
+
+      console.error(
+        "Message :",
         error.message
       );
 
     }
+
+  } else {
+
+    console.log(
+      "✅ Session WhatsApp déjà enregistrée."
+    );
 
   }
 
@@ -267,17 +332,9 @@ async function connectToWhatsApp() {
 
         try {
 
-          // -------------------------------------------
-          // Vérifier qu'il y a bien un message
-          // -------------------------------------------
-
           if (!message.message) {
             continue;
           }
-
-          // -------------------------------------------
-          // Où le message a été envoyé
-          // -------------------------------------------
 
           const remoteJid =
             message.key.remoteJid;
@@ -285,10 +342,6 @@ async function connectToWhatsApp() {
           if (!remoteJid) {
             continue;
           }
-
-          // -------------------------------------------
-          // Récupérer le texte
-          // -------------------------------------------
 
           const text =
             message.message.conversation ||
@@ -310,157 +363,9 @@ async function connectToWhatsApp() {
           let content =
             text.trim();
 
-          // Préfixe 🕊️
-
           if (
             content.startsWith("🕊️")
           ) {
 
             content =
               content
-                .slice("🕊️".length)
-                .trim();
-
-          }
-
-          // Préfixe 🕊
-
-          else if (
-            content.startsWith("🕊")
-          ) {
-
-            content =
-              content
-                .slice("🕊".length)
-                .trim();
-
-          }
-
-          // Préfixe .
-
-          else if (
-            content.startsWith(".")
-          ) {
-
-            content =
-              content
-                .slice(1)
-                .trim();
-
-          }
-
-          // Aucun préfixe
-
-          else {
-
-            continue;
-
-          }
-
-          // =================================================
-          // 🔍 EXTRAIRE LA COMMANDE
-          // =================================================
-
-          if (!content) {
-            continue;
-          }
-
-          const parts =
-            content.split(/\s+/);
-
-          const command =
-            parts
-              .shift()
-              .toLowerCase();
-
-          const args =
-            parts;
-
-          console.log(
-            `⚙️ Commande détectée : ${command}`
-          );
-
-          // =================================================
-          // 📦 CONTEXTE
-          // =================================================
-
-          const context = {
-
-            sock,
-
-            message,
-
-            remoteJid
-
-          };
-
-          // =================================================
-          // 🚀 EXÉCUTER LA COMMANDE
-          // =================================================
-
-          const result =
-            await handleCommand(
-              command,
-              args,
-              context
-            );
-
-          // =================================================
-          // 💬 ENVOYER LA RÉPONSE
-          // =================================================
-
-          if (
-            result !== undefined &&
-            result !== null &&
-            result !== ""
-          ) {
-
-            await sock.sendMessage(
-              remoteJid,
-              {
-                text: String(result)
-              }
-            );
-
-          }
-
-        } catch (error) {
-
-          console.error(
-            "❌ Erreur lors du traitement :",
-            error
-          );
-
-        }
-
-      }
-
-    }
-  );
-
-}
-
-// =====================================================
-// 🚀 DÉMARRAGE DU BOT
-// =====================================================
-
-console.log("");
-console.log(
-  "🕊️ ANGEL NEVER CRY démarre..."
-);
-
-console.log(
-  "📋 Nombre de commandes :",
-  commands.size
-);
-
-connectToWhatsApp().catch(
-  (error) => {
-
-    console.error(
-      "❌ Erreur au démarrage :",
-      error
-    );
-
-  }
-);
