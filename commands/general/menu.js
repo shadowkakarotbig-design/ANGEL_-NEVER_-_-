@@ -1,40 +1,43 @@
-module.exports = {
-  name: "menu",
-  execute() {
-    return `
-╭━━━〔 🕊 ANGEL NEVER CRY 〕━━━╮
-│
-│ 🕊menu
-│
-│ 🎵 MUSIQUE
-│ 🕊play
-│ 🕊stop
-│ 🕊skip
-│
-│ 🎌 ANIME / MANGA / WEBTOON
-│ 🕊protagoniste
-│ 🕊antagoniste
-│ 🕊secondary
-│
-│ 🎭 FUN
-│ 🕊ship
-│ 🕊couple
-│ 🕊aura
-│ 🕊dad
-│ 🕊mom
-│
-│ 🖼️ MÉDIA
-│ 🕊img
-│ 🕊video
-│
-│ 🛡️ MODÉRATION
-│ 🕊mute
-│ 🕊unmute
-│ 🕊antilink
-│ 🕊antibot
-│ 🕊autoreact
-│
+🕊️━━━━━━━━━━━━━━━━━━🕊️
+       𝐀𝐍𝐆𝐄𝐋 𝐍𝐄𝐕𝐄𝐑 𝐂𝐑𝐘
+🕊️━━━━━━━━━━━━━━━━━━🕊️
+
+        ✦ 𝐌𝐄𝐍𝐔 ✦
+
+╭━━━〔 🎵 𝐌𝐔𝐒𝐈𝐂 〕━━━╮
+┃ 🕊️ .play
+┃ 🕊️ .stop
+┃ 🕊️ .skip
+╰━━━━━━━━━━━━━━━━━━╯
+
+╭━━━〔 🎭 𝐀𝐍𝐈𝐌𝐄 〕━━━╮
+┃ 🕊️ .protagoniste
+┃ 🕊️ .antagoniste
+┃ 🕊️ .secondary
+╰━━━━━━━━━━━━━━━━━━╯
+
+╭━━━〔 🎲 𝐅𝐔𝐍 〕━━━╮
+┃ 🕊️ .ship
+┃ 🕊️ .couple
+┃ 🕊️ .aura
+┃ 🕊️ .dad
+┃ 🕊️ .mom
+╰━━━━━━━━━━━━━━━━━━╯
+
+╭━━━〔 🛡️ 𝐌𝐎𝐃𝐄𝐑𝐀𝐓𝐈𝐎𝐍 〕━━━╮
+┃ 🕊️ .mute
+┃ 🕊️ .unmute
+┃ 🕊️ .antilink
+┃ 🕊️ .antibot
+┃ 🕊️ .autoreact
+┃ 🕊️ .tagadmin
+┃ 🕊️ .tagall
 ╰━━━━━━━━━━━━━━━━━━━━╯
-`;
-  }
-};
+
+╭━━━〔 🎬 𝐌𝐄𝐃𝐈𝐀 〕━━━╮
+┃ 🕊️ .img
+┃ 🕊️ .video
+╰━━━━━━━━━━━━━━━━━━╯
+
+        👑 𝐀𝐍𝐆𝐄𝐋 𝐍𝐄𝐕𝐄𝐑 𝐂𝐑𝐘 👑
+             𝐓𝐇𝐀𝐓'𝐒 𝐋𝐀 𝐏𝐄𝐀𝐂𝐄 🕊️
