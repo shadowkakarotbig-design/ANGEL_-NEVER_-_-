@@ -7,7 +7,6 @@ const {
   DisconnectReason
 } = require("@whiskeysockets/baileys");
 
-
 // =====================================================
 // COMMANDES
 // =====================================================
@@ -41,7 +40,6 @@ commands.set("autoreact", require("./commands/moderation/autoreact"));
 commands.set("tagadmin", require("./commands/moderation/tagadmin"));
 commands.set("tagall", require("./commands/moderation/tagall"));
 
-
 // =====================================================
 // GESTION DES COMMANDES
 // =====================================================
@@ -54,12 +52,15 @@ async function handleCommand(command, args, context) {
     return "❌ Commande inconnue. Utilise 🕊menu";
   }
 
+  if (typeof cmd.execute !== "function") {
+    return "❌ Cette commande est mal configurée.";
+  }
+
   return await cmd.execute(args, context);
 }
 
-
 // =====================================================
-// SERVEUR HTTP POUR RENDER
+// SERVEUR RENDER
 // =====================================================
 
 const PORT = process.env.PORT || 10000;
@@ -74,12 +75,9 @@ http.createServer((req, res) => {
 
 }).listen(PORT, "0.0.0.0", () => {
 
-  console.log(
-    `🌐 Serveur actif sur le port ${PORT}`
-  );
+  console.log(`🌐 Serveur actif sur le port ${PORT}`);
 
 });
-
 
 // =====================================================
 // CONNEXION WHATSAPP
@@ -89,7 +87,6 @@ async function connectToWhatsApp() {
 
   const { state, saveCreds } =
     await useMultiFileAuthState("./auth_session");
-
 
   const sock = makeWASocket({
 
@@ -103,12 +100,10 @@ async function connectToWhatsApp() {
 
   });
 
-
   sock.ev.on(
     "creds.update",
     saveCreds
   );
-
 
   // ===================================================
   // CONNEXION
@@ -123,7 +118,6 @@ async function connectToWhatsApp() {
         lastDisconnect
       } = update;
 
-
       if (connection === "connecting") {
 
         console.log(
@@ -131,7 +125,6 @@ async function connectToWhatsApp() {
         );
 
       }
-
 
       if (connection === "open") {
 
@@ -146,19 +139,20 @@ async function connectToWhatsApp() {
           "======================================"
         );
         console.log("");
+        console.log(
+          "📋 Commandes chargées :",
+          [...commands.keys()].join(", ")
+        );
 
       }
-
 
       if (connection === "close") {
 
         const statusCode =
           lastDisconnect?.error?.output?.statusCode;
 
-
         if (
-          statusCode !==
-          DisconnectReason.loggedOut
+          statusCode !== DisconnectReason.loggedOut
         ) {
 
           console.log(
@@ -169,13 +163,11 @@ async function connectToWhatsApp() {
             "🔄 Reconnexion dans 3 secondes..."
           );
 
-
           setTimeout(() => {
 
             connectToWhatsApp();
 
           }, 3000);
-
 
         } else {
 
@@ -190,16 +182,14 @@ async function connectToWhatsApp() {
     }
   );
 
-
   // ===================================================
-  // CODE DE CONNEXION WHATSAPP
+  // CODE DE CONNEXION PAR NUMÉRO
   // ===================================================
 
   if (!state.creds.registered) {
 
     const phoneNumber =
       process.env.PHONE_NUMBER;
-
 
     if (!phoneNumber) {
 
@@ -211,10 +201,8 @@ async function connectToWhatsApp() {
 
     }
 
-
     const cleanNumber =
       phoneNumber.replace(/\D/g, "");
-
 
     try {
 
@@ -223,48 +211,40 @@ async function connectToWhatsApp() {
         "🔄 Préparation du code WhatsApp..."
       );
 
-
       await new Promise(
-        resolve => setTimeout(resolve, 3000)
+        resolve => setTimeout(resolve, 5000)
       );
-
 
       const code =
         await sock.requestPairingCode(
           cleanNumber
         );
 
-
       console.log("");
       console.log(
         "======================================"
       );
-
       console.log(
         "🔑 CODE DE CONNEXION WHATSAPP"
       );
-
       console.log(
         "👉 " + code
       );
-
       console.log(
         "======================================"
       );
-
       console.log("");
 
     } catch (error) {
 
       console.error(
         "❌ Impossible de générer le code WhatsApp :",
-        error
+        error.message
       );
 
     }
 
   }
-
 
   // ===================================================
   // RÉCEPTION DES MESSAGES
@@ -281,52 +261,40 @@ async function connectToWhatsApp() {
           if (!message.message)
             continue;
 
-
-          if (message.key.fromMe)
-            continue;
-
-
           const remoteJid =
             message.key.remoteJid;
-
 
           const text =
             message.message.conversation ||
             message.message.extendedTextMessage?.text ||
             "";
 
-
           if (!text)
             continue;
-
 
           console.log(
             `📩 Message reçu : ${text}`
           );
 
-
           // =============================================
-          // PRÉFIXE 🕊
+          // PRÉFIXE
           // =============================================
 
-          let content = "";
-
+          let content = text.trim();
 
           if (
-            text.startsWith("🕊")
+            content.startsWith("🕊")
           ) {
 
             content =
-              text.slice(2).trim();
-
+              content.slice(2).trim();
 
           } else if (
-            text.startsWith(".")
+            content.startsWith(".")
           ) {
 
             content =
-              text.slice(1).trim();
-
+              content.slice(1).trim();
 
           } else {
 
@@ -334,10 +302,8 @@ async function connectToWhatsApp() {
 
           }
 
-
           if (!content)
             continue;
-
 
           // =============================================
           // COMMANDE
@@ -346,14 +312,15 @@ async function connectToWhatsApp() {
           const parts =
             content.split(/\s+/);
 
-
           const command =
             parts.shift().toLowerCase();
-
 
           const args =
             parts;
 
+          console.log(
+            `⚙️ Commande détectée : ${command}`
+          );
 
           // =============================================
           // CONTEXTE
@@ -362,13 +329,10 @@ async function connectToWhatsApp() {
           const context = {
 
             sock,
-
             message,
-
             remoteJid
 
           };
-
 
           // =============================================
           // EXÉCUTION
@@ -380,7 +344,6 @@ async function connectToWhatsApp() {
               args,
               context
             );
-
 
           if (
             result !== undefined &&
@@ -395,7 +358,6 @@ async function connectToWhatsApp() {
             );
 
           }
-
 
         } catch (error) {
 
@@ -413,7 +375,6 @@ async function connectToWhatsApp() {
 
 }
 
-
 // =====================================================
 // DÉMARRAGE
 // =====================================================
@@ -422,12 +383,10 @@ console.log(
   "🕊️ ANGEL NEVER CRY démarre..."
 );
 
-
 console.log(
-  "✅ Commandes chargées :",
+  "✅ Nombre de commandes chargées :",
   commands.size
 );
-
 
 connectToWhatsApp().catch(
   (error) => {
