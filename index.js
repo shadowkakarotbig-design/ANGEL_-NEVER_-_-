@@ -8,12 +8,13 @@ const {
 } = require("@whiskeysockets/baileys");
 
 // =====================================================
-// COMMANDES
+// 📋 COMMANDES
 // =====================================================
 
 const commands = new Map();
 
 commands.set("menu", require("./commands/general/menu"));
+
 commands.set("play", require("./commands/music/play"));
 commands.set("stop", require("./commands/music/stop"));
 commands.set("skip", require("./commands/music/skip"));
@@ -41,7 +42,7 @@ commands.set("tagadmin", require("./commands/moderation/tagadmin"));
 commands.set("tagall", require("./commands/moderation/tagall"));
 
 // =====================================================
-// GESTION DES COMMANDES
+// ⚙️ EXÉCUTER UNE COMMANDE
 // =====================================================
 
 async function handleCommand(command, args, context) {
@@ -49,18 +50,18 @@ async function handleCommand(command, args, context) {
   const cmd = commands.get(command);
 
   if (!cmd) {
-    return "❌ Commande inconnue. Utilise 🕊menu";
+    return "❌ Commande inconnue.\n\nTape 🕊️menu pour voir les commandes.";
   }
 
   if (typeof cmd.execute !== "function") {
-    return "❌ Cette commande est mal configurée.";
+    return `❌ La commande "${command}" est mal configurée.`;
   }
 
   return await cmd.execute(args, context);
 }
 
 // =====================================================
-// SERVEUR RENDER
+// 🌐 SERVEUR RENDER
 // =====================================================
 
 const PORT = process.env.PORT || 10000;
@@ -75,12 +76,12 @@ http.createServer((req, res) => {
 
 }).listen(PORT, "0.0.0.0", () => {
 
-  console.log(`🌐 Serveur actif sur le port ${PORT}`);
+  console.log(`🌐 Serveur Render actif sur le port ${PORT}`);
 
 });
 
 // =====================================================
-// CONNEXION WHATSAPP
+// 🟢 CONNEXION WHATSAPP
 // =====================================================
 
 async function connectToWhatsApp() {
@@ -100,13 +101,17 @@ async function connectToWhatsApp() {
 
   });
 
+  // ===================================================
+  // 💾 SAUVEGARDE DE LA SESSION
+  // ===================================================
+
   sock.ev.on(
     "creds.update",
     saveCreds
   );
 
   // ===================================================
-  // CONNEXION
+  // 📡 ÉTAT DE LA CONNEXION
   // ===================================================
 
   sock.ev.on(
@@ -139,8 +144,12 @@ async function connectToWhatsApp() {
           "======================================"
         );
         console.log("");
+
         console.log(
-          "📋 Commandes chargées :",
+          "📋 Commandes chargées :"
+        );
+
+        console.log(
           [...commands.keys()].join(", ")
         );
 
@@ -183,7 +192,7 @@ async function connectToWhatsApp() {
   );
 
   // ===================================================
-  // CODE DE CONNEXION PAR NUMÉRO
+  // 🔑 CODE DE CONNEXION PAR NUMÉRO
   // ===================================================
 
   if (!state.creds.registered) {
@@ -247,7 +256,7 @@ async function connectToWhatsApp() {
   }
 
   // ===================================================
-  // RÉCEPTION DES MESSAGES
+  // 💬 RÉCEPTION DES MESSAGES
   // ===================================================
 
   sock.ev.on(
@@ -258,62 +267,111 @@ async function connectToWhatsApp() {
 
         try {
 
-          if (!message.message)
+          // -------------------------------------------
+          // Vérifier qu'il y a bien un message
+          // -------------------------------------------
+
+          if (!message.message) {
             continue;
+          }
+
+          // -------------------------------------------
+          // Où le message a été envoyé
+          // -------------------------------------------
 
           const remoteJid =
             message.key.remoteJid;
+
+          if (!remoteJid) {
+            continue;
+          }
+
+          // -------------------------------------------
+          // Récupérer le texte
+          // -------------------------------------------
 
           const text =
             message.message.conversation ||
             message.message.extendedTextMessage?.text ||
             "";
 
-          if (!text)
+          if (!text) {
             continue;
+          }
 
           console.log(
             `📩 Message reçu : ${text}`
           );
 
-          // =============================================
-          // PRÉFIXE
-          // =============================================
+          // =================================================
+          // 🕊️ DÉTECTION DU PRÉFIXE
+          // =================================================
 
-          let content = text.trim();
+          let content =
+            text.trim();
+
+          // Préfixe 🕊️
 
           if (
+            content.startsWith("🕊️")
+          ) {
+
+            content =
+              content
+                .slice("🕊️".length)
+                .trim();
+
+          }
+
+          // Préfixe 🕊
+
+          else if (
             content.startsWith("🕊")
           ) {
 
             content =
-              content.slice(2).trim();
+              content
+                .slice("🕊".length)
+                .trim();
 
-          } else if (
+          }
+
+          // Préfixe .
+
+          else if (
             content.startsWith(".")
           ) {
 
             content =
-              content.slice(1).trim();
+              content
+                .slice(1)
+                .trim();
 
-          } else {
+          }
+
+          // Aucun préfixe
+
+          else {
 
             continue;
 
           }
 
-          if (!content)
-            continue;
+          // =================================================
+          // 🔍 EXTRAIRE LA COMMANDE
+          // =================================================
 
-          // =============================================
-          // COMMANDE
-          // =============================================
+          if (!content) {
+            continue;
+          }
 
           const parts =
             content.split(/\s+/);
 
           const command =
-            parts.shift().toLowerCase();
+            parts
+              .shift()
+              .toLowerCase();
 
           const args =
             parts;
@@ -322,21 +380,23 @@ async function connectToWhatsApp() {
             `⚙️ Commande détectée : ${command}`
           );
 
-          // =============================================
-          // CONTEXTE
-          // =============================================
+          // =================================================
+          // 📦 CONTEXTE
+          // =================================================
 
           const context = {
 
             sock,
+
             message,
+
             remoteJid
 
           };
 
-          // =============================================
-          // EXÉCUTION
-          // =============================================
+          // =================================================
+          // 🚀 EXÉCUTER LA COMMANDE
+          // =================================================
 
           const result =
             await handleCommand(
@@ -345,9 +405,14 @@ async function connectToWhatsApp() {
               context
             );
 
+          // =================================================
+          // 💬 ENVOYER LA RÉPONSE
+          // =================================================
+
           if (
             result !== undefined &&
-            result !== null
+            result !== null &&
+            result !== ""
           ) {
 
             await sock.sendMessage(
@@ -362,7 +427,7 @@ async function connectToWhatsApp() {
         } catch (error) {
 
           console.error(
-            "❌ Erreur lors du traitement du message :",
+            "❌ Erreur lors du traitement :",
             error
           );
 
@@ -376,15 +441,16 @@ async function connectToWhatsApp() {
 }
 
 // =====================================================
-// DÉMARRAGE
+// 🚀 DÉMARRAGE DU BOT
 // =====================================================
 
+console.log("");
 console.log(
   "🕊️ ANGEL NEVER CRY démarre..."
 );
 
 console.log(
-  "✅ Nombre de commandes chargées :",
+  "📋 Nombre de commandes :",
   commands.size
 );
 
@@ -392,7 +458,7 @@ connectToWhatsApp().catch(
   (error) => {
 
     console.error(
-      "❌ Erreur au démarrage de WhatsApp :",
+      "❌ Erreur au démarrage :",
       error
     );
 
