@@ -2,51 +2,76 @@ module.exports = {
 
   async execute(args, { sock, remoteJid }) {
 
-    await sock.sendMessage(remoteJid, {
-      image: { url: "./media/menu.jpg" },
-      caption: `🕊️━━━━━━━━━━━━━━━━━━🕊️
-        ANGEL NEVER CRY
-🕊️━━━━━━━━━━━━━━━━━━🕊️
+    const menu = `
+╭━━━〔 🪽 𝐀𝐍𝐆𝐄𝐋 𝐍𝐄𝐕𝐄𝐑 𝐂𝐑𝐘 〕━━━╮
 
-👑 MENU PRINCIPAL
+        ✦ 𝐂𝐎𝐌𝐌𝐀𝐍𝐃𝐄𝐒 ✦
 
-🕊️ 🕊️ 🕊️
+╭─〔 🕊️ 𝐆𝐄́𝐍𝐄́𝐑𝐀𝐋 〕
+│
+│ 🕊️menu
+│
+╰────────────────────
 
-📌 COMMANDES GÉNÉRALES
-🕊️menu
-🕊️play
-🕊️stop
-🕊️skip
+╭─〔 🎵 𝐌𝐔𝐒𝐈𝐐𝐔𝐄 〕
+│
+│ 🎧play
+│ ⏹️stop
+│ ⏭️skip
+│
+╰────────────────────
 
-🎭 ANIME
-🕊️protagoniste
-🕊️antagoniste
-🕊️secondary
+╭─〔 🎌 𝐀𝐍𝐈𝐌𝐄 〕
+│
+│ ⚔️protagoniste
+│ ☠️antagoniste
+│ ⭐secondary
+│
+╰────────────────────
 
-❤️ FUN
-🕊️ship
-🕊️couple
-🕊️aura
-🕊️dad
-🕊️mom
+╭─〔 💫 𝐅𝐔𝐍 〕
+│
+│ ❤️ship
+│ 💞couple
+│ 🔥aura
+│ 👨dad
+│ 👩mom
+│
+╰────────────────────
 
-🖼️ MÉDIA
-🕊️img
-🕊️video
+╭─〔 🖼️ 𝐌𝐄𝐃𝐈𝐀 〕
+│
+│ 🖼️img
+│ 🎬video
+│
+╰────────────────────
 
-🛡️ MODÉRATION
-🕊️mute
-🕊️unmute
-🕊️antilink
-🕊️antibot
-🕊️autoreact
-🕊️tagadmin
-🕊️tagall
+╭─〔 🛡️ 𝐌𝐎𝐃𝐄́𝐑𝐀𝐓𝐈𝐎𝐍 〕
+│
+│ 🔇mute
+│ 🔊unmute
+│ 🔗antilink
+│ 🤖antibot
+│ ⚡autoreact
+│
+╰────────────────────
 
-🕊️━━━━━━━━━━━━━━━━━━🕊️
-       ANGEL NEVER CRY
-🕊️━━━━━━━━━━━━━━━━━━🕊️`
-    });
+╭─〔 👑 𝐆𝐑𝐎𝐔𝐏𝐄 〕
+│
+│ 👑tagadmin
+│ 📢tagall
+│
+╰────────────────────
+
+╰━━━〔 🕊️ 𝐓𝐇𝐀𝐓'𝐒 𝐋𝐀 𝐏𝐄𝐀𝐂𝐄 〕━━━╯
+`;
+
+    await sock.sendMessage(
+      remoteJid,
+      {
+        text: menu
+      }
+    );
 
     return null;
   }
