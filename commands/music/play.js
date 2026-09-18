@@ -1,16 +1,13 @@
-module.exports = {
-  name: "play",
-  async execute(sock, msg, args) {
-    if (!args.length) {
-      return sock.sendMessage(msg.key.remoteJid, {
-        text: "🕊 Utilisation : 🕊play [nom de la musique]"
-      });
-    }
-
-    const music = args.join(" ");
-
-    await sock.sendMessage(msg.key.remoteJid, {
-      text: `🎵 Recherche de : ${music}\n\n⏳ Fonction de téléchargement audio en préparation...`
-    });
+{
+  "name": "angel-never-cry",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "latest",
+    "pino": "latest",
+    "youtube-dl-exec": "^3.1.15"
   }
-};
+}
