@@ -1,5 +1,3 @@
-const { rechercherAnime } = require("../api/anime");
-
 module.exports = {
   name: "protagoniste",
 
@@ -8,32 +6,12 @@ module.exports = {
       return "🕊️ Utilisation : 🕊️protagoniste [anime]";
     }
 
-    const recherche = args.join(" ");
+    const anime = args.join(" ");
 
-    try {
-      const resultats = await rechercherAnime(recherche);
+    return `🎭 PROTAGONISTE
 
-      if (!resultats.length) {
-        return `❌ Aucun anime trouvé pour : ${recherche}`;
-      }
+🎌 Anime : ${anime}
 
-      const anime = resultats[0];
-
-      const titre =
-        anime.title.english ||
-        anime.title.romaji ||
-        recherche;
-
-      return `🎭 PROTAGONISTE
-
-🎌 Anime : ${titre}
-
-🔎 Recherche effectuée avec AniList.
-
-ℹ️ Cette API fournit les informations sur l'œuvre.`;
-    } catch (error) {
-      console.error("❌ Erreur AniList :", error);
-      return "❌ Impossible de contacter l'API AniList actuellement.";
-    }
+🔎 Recherche en préparation...`;
   }
 };
