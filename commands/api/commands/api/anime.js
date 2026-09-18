@@ -2,6 +2,7 @@ const https = require("https");
 
 function rechercherAnime(recherche) {
   return new Promise((resolve, reject) => {
+
     const query = `
       query ($search: String) {
         Page(perPage: 5) {
@@ -15,6 +16,16 @@ function rechercherAnime(recherche) {
             episodes
             status
             averageScore
+            characters(sort: ROLE, perPage: 5) {
+              edges {
+                role
+                node {
+                  name {
+                    full
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -45,6 +56,7 @@ function rechercherAnime(recherche) {
       });
 
       res.on("end", () => {
+
         if (res.statusCode !== 200) {
           return reject(
             new Error(`AniList erreur HTTP ${res.statusCode}`)
@@ -61,9 +73,11 @@ function rechercherAnime(recherche) {
           }
 
           resolve(json.data?.Page?.media || []);
+
         } catch (error) {
           reject(error);
         }
+
       });
     });
 
