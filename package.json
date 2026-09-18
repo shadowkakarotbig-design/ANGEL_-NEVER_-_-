@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "@whiskeysockets/baileys": "latest",
-    "pino": "latest",
-    "youtube-dl-exec": "^3.1.15"
+    "pino": "latest"
   }
 }
