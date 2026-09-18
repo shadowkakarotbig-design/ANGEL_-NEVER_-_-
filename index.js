@@ -1,7 +1,4 @@
-
-
-  
- const http = require("http");
+const http = require("http");
 const pino = require("pino");
 
 const {
@@ -99,7 +96,8 @@ async function connectToWhatsApp() {
 
     printQRInTerminal: false,
 
-    browser: Browsers.ubuntu("Chrome"),
+    // 🔧 NAVIGATEUR MODIFIÉ POUR L'ASSOCIATION
+    browser: Browsers.macOS("Chrome"),
 
     connectTimeoutMs: 60000
   });
@@ -168,7 +166,6 @@ async function connectToWhatsApp() {
           console.log(
             "❌ Session WhatsApp déconnectée."
           );
-
         }
       }
     }
